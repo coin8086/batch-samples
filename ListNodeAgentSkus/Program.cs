@@ -40,7 +40,7 @@ Image Version = {3}
                     {
                         Console.WriteLine(String.Format(format, img.Publisher, img.Offer, img.Sku, img.Version));
                     }
-                }).GetAwaiter().GetResult();
+                }).Wait();
 
             }
         }
