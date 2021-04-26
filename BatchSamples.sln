@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListNodeAgentSkus", "ListNo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyJobManagerTask", "JobManagerTask\MyJobManagerTask.csproj", "{DE4CEB36-482B-4835-840A-A583C2A6F27A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContainerSample", "Container\ContainerSample.csproj", "{4B2733B4-3845-4097-9C5C-623E9792F626}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{DE4CEB36-482B-4835-840A-A583C2A6F27A}.Release|x64.Build.0 = Release|Any CPU
 		{DE4CEB36-482B-4835-840A-A583C2A6F27A}.Release|x86.ActiveCfg = Release|Any CPU
 		{DE4CEB36-482B-4835-840A-A583C2A6F27A}.Release|x86.Build.0 = Release|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Debug|x64.Build.0 = Debug|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Debug|x86.Build.0 = Debug|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Release|x64.ActiveCfg = Release|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Release|x64.Build.0 = Release|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Release|x86.ActiveCfg = Release|Any CPU
+		{4B2733B4-3845-4097-9C5C-623E9792F626}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
