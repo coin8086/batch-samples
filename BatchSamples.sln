@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPool", "AutoPool\AutoPo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListNodeAgentSkus", "ListNodeAgentSkus\ListNodeAgentSkus.csproj", "{47637916-6A7C-4255-8A5C-5F7A52138D9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyJobManagerTask", "JobManagerTask\MyJobManagerTask.csproj", "{DE4CEB36-482B-4835-840A-A583C2A6F27A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobManagerTask", "JobManagerTask\JobManagerTask.csproj", "{DE4CEB36-482B-4835-840A-A583C2A6F27A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContainerSample", "Container\ContainerSample.csproj", "{4B2733B4-3845-4097-9C5C-623E9792F626}"
 EndProject

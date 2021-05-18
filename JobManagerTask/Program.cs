@@ -4,7 +4,7 @@ using Microsoft.Azure.Batch.Common;
 using System;
 using System.Collections.Generic;
 
-namespace MyJobManagerTask
+namespace JobManagerTask
 {
     class Program
     {
@@ -15,7 +15,7 @@ Usage:
 {0} [-n NumOfTasks] [-c TaskCmdLine] [-d]
 ";
             //Console.WriteLine(String.Format(msg, Environment.GetCommandLineArgs()[0])); //TODO: This returns the .dll name instead of .exe?
-            Console.WriteLine(String.Format(msg, "MyJobManagerTask"));
+            Console.WriteLine(String.Format(msg, "JobManagerTask"));
         }
 
         static int Main(string[] args)
@@ -58,8 +58,8 @@ Usage:
                 return 1;
             }
 
-            var settingNames = new (string, string)[] 
-            { 
+            var settingNames = new (string, string)[]
+            {
                 ("AZ_BATCH_ACCOUNT_NAME", "BatchAccountName"),
                 ("AZ_BATCH_ACCOUNT_URL", "BatchAccountUrl"),
                 ("AZ_BATCH_JOB_ID", "JobId"),
