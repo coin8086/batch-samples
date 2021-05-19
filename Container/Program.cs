@@ -9,61 +9,45 @@ namespace ContainerSample
 {
     class Program
     {
-        static void ShowUsage()
+        class Settings : Common.Settings
         {
-            string msg = @"
+            public bool KeepPoolAndJob { get; protected set; }
+
+            protected override void ShowHelp(Exception error)
+            {
+                string msg = @"
 Usage:
 {0} [-k]
 
     -k: Keep pool and job after executing the program. They'll be deleted by default. 
 ";
-            //Console.WriteLine(String.Format(msg, Environment.GetCommandLineArgs()[0])); //TODO: This returns the .dll name instead of .exe?
-            Console.WriteLine(String.Format(msg, "ContainerSample"));
-        }
+                //Console.WriteLine(String.Format(msg, Environment.GetCommandLineArgs()[0])); //TODO: This returns the .dll name instead of .exe?
+                Console.WriteLine(String.Format(msg, "ContainerSample"));
+                base.ShowHelp(error);
+            }
 
-        static int Main(string[] args)
-        {
-            bool keepPoolAndJob = false;
-            try
+            protected override void GetCmdArgs(string[] args)
             {
-                for (int i = 0; i < args.Length; i++)
+                //NOTE: The index is from 1 instead of 0.
+                for (int i = 1; i < args.Length; i++)
                 {
                     switch (args[i])
                     {
                         case "-k":
-                            keepPoolAndJob = true;
+                            KeepPoolAndJob = true;
                             break;
                         default:
-                            Console.WriteLine($"Unknonw argument `{args[i]}'!");
-                            throw new ArgumentException();
+                            throw new ArgumentException($"Unknonw argument `{args[i]}'!");
                     }
                 }
             }
-            catch
-            {
-                ShowUsage();
-                return 1;
-            }
+        }
 
-            var settingNames = new string[]
-            {
-                "BatchAccountName",
-                "BatchAccountUrl",
-                "BatchAccountKey",
-            };
-            var settings = new Dictionary<string, string>();
-            foreach (var name in settingNames)
-            {
-                var value = Environment.GetEnvironmentVariable(name);
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    Console.WriteLine($"Environment variable {name} is not set.");
-                    return 1;
-                }
-                settings[name] = value;
-            }
+        static int Main(string[] args)
+        {
+            var settings = new Settings();
 
-            var cred = new BatchSharedKeyCredentials(settings["BatchAccountUrl"], settings["BatchAccountName"], settings["BatchAccountKey"]);
+            var cred = new BatchSharedKeyCredentials(settings.BatchAccountUrl, settings.BatchAccountName, settings.BatchAccountKey);
             using (var client = BatchClient.Open(cred))
             {
                 string poolId = null;
@@ -140,7 +124,7 @@ Usage:
                 }
                 finally
                 {
-                    if (!keepPoolAndJob)
+                    if (!settings.KeepPoolAndJob)
                     {
                         if (jobId != null)
                         {

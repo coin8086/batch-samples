@@ -8,21 +8,10 @@ namespace ListNodeAgentSkus
     {
         static void Main()
         {
-            // Batch account credentials
-            var BatchAccountName = Environment.GetEnvironmentVariable("BatchAccountName");
-            var BatchAccountKey = Environment.GetEnvironmentVariable("BatchAccountKey");
-            var BatchAccountUrl = Environment.GetEnvironmentVariable("BatchAccountUrl");
-
-            if (String.IsNullOrEmpty(BatchAccountName) ||
-                String.IsNullOrEmpty(BatchAccountKey) ||
-                String.IsNullOrEmpty(BatchAccountUrl))
-            {
-                throw new InvalidOperationException("One or more Batch credentials are not specified.");
-            }
+            var settings = new Common.Settings();
 
             // Get a Batch client using account creds
-
-            BatchSharedKeyCredentials cred = new BatchSharedKeyCredentials(BatchAccountUrl, BatchAccountName, BatchAccountKey);
+            BatchSharedKeyCredentials cred = new BatchSharedKeyCredentials(settings.BatchAccountUrl, settings.BatchAccountName, settings.BatchAccountKey);
 
             using (BatchClient batchClient = BatchClient.Open(cred))
             {

@@ -7,36 +7,33 @@ namespace AutoPool
 {
     public class Program
     {
-        static int Main(string[] args)
+        class Settings : Common.Settings
         {
-            bool keepPool = false;
-            for (int i = 0; i < args.Length; i++)
+            public bool KeepPool { get; protected set; }
+
+            protected override void GetCmdArgs(string[] args)
             {
-                switch (args[i])
+                //NOTE: The index is from 1 instead of 0.
+                for (int i = 1; i < args.Length; i++)
                 {
-                    case "-k":
-                        keepPool = true;
-                        break;
-                    default:
-                        Console.WriteLine($"Unknonw argument `{args[i]}'!");
-                        return 1;
+                    switch (args[i])
+                    {
+                        case "-k":
+                            KeepPool = true;
+                            break;
+                        default:
+                            throw new ArgumentException($"Unknonw argument `{args[i]}'!");
+                    }
                 }
             }
-            
-            // Batch account credentials
-            var BatchAccountName = Environment.GetEnvironmentVariable("BatchAccountName");
-            var BatchAccountKey = Environment.GetEnvironmentVariable("BatchAccountKey");
-            var BatchAccountUrl = Environment.GetEnvironmentVariable("BatchAccountUrl");
+        }
 
-            if (String.IsNullOrEmpty(BatchAccountName) ||
-                String.IsNullOrEmpty(BatchAccountKey) ||
-                String.IsNullOrEmpty(BatchAccountUrl))
-            {
-                throw new InvalidOperationException("One or more Batch credentials are not specified.");
-            }
+        static int Main(string[] args)
+        {
+            var settings = new Settings();
 
             // Get a Batch client using account creds
-            BatchSharedKeyCredentials cred = new BatchSharedKeyCredentials(BatchAccountUrl, BatchAccountName, BatchAccountKey);
+            BatchSharedKeyCredentials cred = new BatchSharedKeyCredentials(settings.BatchAccountUrl, settings.BatchAccountName, settings.BatchAccountKey);
             using (BatchClient batchClient = BatchClient.Open(cred))
             {
                 CloudJob job = null;
@@ -67,7 +64,7 @@ namespace AutoPool
                                 )
                             },
                             PoolLifetimeOption = PoolLifetimeOption.Job,
-                            KeepAlive = keepPool,
+                            KeepAlive = settings.KeepPool,
                         }
                     };
                     try

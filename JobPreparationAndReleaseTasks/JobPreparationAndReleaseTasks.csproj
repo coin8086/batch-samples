@@ -8,4 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Batch" Version="14.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
 </Project>

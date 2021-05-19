@@ -11,55 +11,53 @@ namespace AppPackage
 {
     class Program
     {
-        static void ShowUsage()
+        class Settings : Common.Settings
         {
-            string msg = @"
+            public string Application { get; private set; }
+
+            public string Version { get; private set; }
+
+            protected override void ShowHelp(Exception error)
+            {
+                string msg = @"
 Usage:
 AppPackage <-a PackageName> [-v PackageVersion]
 ";
-            Console.WriteLine(msg);
+                Console.WriteLine(msg);
+                base.ShowHelp(error);
+            }
+
+            protected override void GetCmdArgs(string[] args)
+            {
+                //NOTE: The index is from 1 instead of 0.
+                for (int i = 1; i < args.Length; i++)
+                {
+                    switch (args[i])
+                    {
+                        case "-a":
+                            Application = args[++i];
+                            break;
+                        case "-v":
+                            Version = args[++i];
+                            break;
+                        default:
+                            throw new ArgumentException($"Unknonw argument `{args[i]}'!");
+                    }
+                }
+                if (string.IsNullOrWhiteSpace(Application))
+                {
+                    throw new ArgumentException("Application must be specified in argument `-a'.");
+                }
+            }
         }
+
 
         static int Main(string[] args)
         {
-            string app = null;
-            string ver = null;
-            for (int i = 0; i < args.Length; i++)
-            {
-                switch (args[i])
-                {
-                    case "-a":
-                        app = args[++i];
-                        break;
-                    case "-v":
-                        ver = args[++i];
-                        break;
-                    default:
-                        Console.WriteLine($"Unknonw argument `{args[i]}'!");
-                        ShowUsage();
-                        return 1;
-                }
-            }
-            if (app == null)
-            {
-                ShowUsage();
-                return 1;
-            }
-
-            // Batch account credentials
-            var BatchAccountName = Environment.GetEnvironmentVariable("BatchAccountName");
-            var BatchAccountKey = Environment.GetEnvironmentVariable("BatchAccountKey");
-            var BatchAccountUrl = Environment.GetEnvironmentVariable("BatchAccountUrl");
-
-            if (String.IsNullOrEmpty(BatchAccountName) ||
-                String.IsNullOrEmpty(BatchAccountKey) ||
-                String.IsNullOrEmpty(BatchAccountUrl))
-            {
-                throw new InvalidOperationException("One or more Batch credentials are not specified.");
-            }
+            var settings = new Settings();
 
             // Get a Batch client using account creds
-            BatchSharedKeyCredentials cred = new BatchSharedKeyCredentials(BatchAccountUrl, BatchAccountName, BatchAccountKey);
+            BatchSharedKeyCredentials cred = new BatchSharedKeyCredentials(settings.BatchAccountUrl, settings.BatchAccountName, settings.BatchAccountKey);
             using (BatchClient batchClient = BatchClient.Open(cred))
             {
                 var pool = batchClient.PoolOperations.CreatePool(
@@ -79,14 +77,14 @@ AppPackage <-a PackageName> [-v PackageVersion]
                 {
                     new ApplicationPackageReference()
                     {
-                        ApplicationId = app,
-                        Version = ver
+                        ApplicationId = settings.Application,
+                        Version = settings.Version
                     }
                 };
-                var packagePath = $"AZ_BATCH_APP_PACKAGE_{app}";
-                if (ver != null)
+                var packagePath = $"AZ_BATCH_APP_PACKAGE_{settings.Application}";
+                if (!string.IsNullOrWhiteSpace(settings.Version))
                 {
-                    packagePath += $"#{ver}";
+                    packagePath += $"#{settings.Version}";
                 }
                 //NOTE: Make sure the app package containing Hello.ps1 is specified and has been uploaded to the current Batch account.
                 //Or the command will fail.
@@ -95,7 +93,7 @@ AppPackage <-a PackageName> [-v PackageVersion]
                 {
                     CommandLine = cmd
                 };
-                Console.WriteLine($"Creating pool `{pool.Id}' with application `{app}' version `{ver}' and start command:\n{cmd}");
+                Console.WriteLine($"Creating pool `{pool.Id}' with application `{settings.Application}' version `{settings.Version}' and start command:\n{cmd}");
                 pool.Commit();
                 return 0;
             }
