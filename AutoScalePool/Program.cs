@@ -153,8 +153,8 @@ Usage:
                     job.AddTask(tasks);
                     job.CommitChanges();
 
-                    //Evaluate auto scale 3 times, every 3 minutes.
-                    for (int i = 0; i < 3; i++)
+                    //Evaluate auto scale 4 times, every 3 minutes.
+                    for (int i = 0; i < 4; i++)
                     {
                         Console.WriteLine("\nEvaluating...");
                         EvalueateAutoScaleForumla(client, poolId, settings.AutoScaleFormula);
@@ -162,7 +162,7 @@ Usage:
                         Console.WriteLine("\nGetting nodes...");
                         GetNodesInPool(client, poolId);
 
-                        if (i < 2)
+                        if (i < 3)
                         {
                             Console.WriteLine("\nSleeping 3 minutes and evaluate again...");
                             Thread.Sleep(TimeSpan.FromMinutes(3));
