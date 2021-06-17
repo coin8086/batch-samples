@@ -12,14 +12,19 @@ namespace AutoScalePool
         class Settings : Common.Settings
         {
             public string AutoScaleFormula { get; protected set; } = @"
-// In this example, the pool size is adjusted based on the number of tasks in the queue. 
+// Get Active, Running and Pending tasks of the last sample
+active = val($ActiveTasks.GetSample(1), 0);
+pending = val($PendingTasks.GetSample(1), 0);
+running = val($RunningTasks.GetSample(1), 0);
+
+// In this example, the pool size is adjusted based on the number of tasks in the queue.
 // Note that both comments and line breaks are acceptable in formula strings.
 
 // Get pending tasks for the past 5 minutes.
 $samples = $ActiveTasks.GetSamplePercent(TimeInterval_Minute * 5);
 
 // If we have fewer than 70 percent data points, we use the last sample point, otherwise we use the maximum of last sample point and the history average.
-$tasks = $samples < 70 ? max(0, $ActiveTasks.GetSample(1)) : 
+$tasks = $samples < 70 ? max(0, $ActiveTasks.GetSample(1)) :
     max( $ActiveTasks.GetSample(1), avg($ActiveTasks.GetSample(TimeInterval_Minute * 5)));
 
 // If number of pending tasks is not 0, set targetVM to pending tasks, otherwise half of current dedicated.
@@ -33,11 +38,18 @@ $TargetDedicatedNodes = max(0, min($targetVMs, cappedPoolSize));
 $NodeDeallocationOption = taskcompletion;
 ";
 
+            //The minimum allowed is 5 min, and default is 15 min.
+            public int AutoScaleEvaluationInterval { get; } = 300;
+
             public bool KeepPoolAndJob { get; protected set; } = false;
 
             public int NumOfTasks { get; protected set; } = 10;
 
-            public int SecondsToSleep { get; protected set; } = 600;
+            public int SecondsToSleep { get; protected set; } = 180;
+
+            public int CheckInterval { get; } = 300;
+
+            public int CheckTimes { get; } = 4;
 
             protected override void ShowHelp(Exception error)
             {
@@ -128,7 +140,7 @@ Usage:
                         virtualMachineConfiguration: virtualMachineConfiguration);
                     pool.AutoScaleEnabled = true;
                     pool.AutoScaleFormula = settings.AutoScaleFormula;
-                    pool.AutoScaleEvaluationInterval = TimeSpan.FromMinutes(5); //The minimum allowed is 5 min, and default is 15 min.
+                    pool.AutoScaleEvaluationInterval = TimeSpan.FromSeconds(settings.AutoScaleEvaluationInterval);
                     Console.WriteLine($"Creating pool `{poolId}' with autoscale formula:\n{settings.AutoScaleFormula}");
                     pool.Commit();
 
@@ -153,8 +165,7 @@ Usage:
                     job.AddTask(tasks);
                     job.CommitChanges();
 
-                    //Evaluate auto scale 4 times, every 3 minutes.
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < settings.CheckTimes; i++)
                     {
                         Console.WriteLine("\nEvaluating...");
                         EvalueateAutoScaleForumla(client, poolId, settings.AutoScaleFormula);
@@ -164,8 +175,8 @@ Usage:
 
                         if (i < 3)
                         {
-                            Console.WriteLine("\nSleeping 3 minutes and evaluate again...");
-                            Thread.Sleep(TimeSpan.FromMinutes(3));
+                            Console.WriteLine($"\nSleeping {settings.CheckInterval} seconds and evaluate again...");
+                            Thread.Sleep(TimeSpan.FromSeconds(settings.CheckInterval));
                         }
                     }
                 }
