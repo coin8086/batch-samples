@@ -63,10 +63,10 @@ Usage:
             protected override void GetEnvArgs()
             {
                 var settingNames = new (string, string)[] {
-                    ("AZ_BATCH_ACCOUNT_NAME", "BatchAccountName"),
-                    ("AZ_BATCH_ACCOUNT_URL", "BatchAccountUrl"),
+                    ("AZ_BATCH_ACCOUNT_NAME", "AZURE_BATCH_ACCOUNT"),
+                    ("AZ_BATCH_ACCOUNT_URL", "AZURE_BATCH_ENDPOINT"),
                     ("AZ_BATCH_JOB_ID", "JobId"),
-                    ("BatchAccountKey", "BatchAccountKey"),
+                    ("BatchAccountKey", "AZURE_BATCH_ACCESS_KEY"),
                 };
                 var settings = new Dictionary<string, string>();
                 foreach (var name in settingNames)
@@ -84,9 +84,9 @@ Usage:
                     }
                     settings[name.Item2] = value;
                 }
-                BatchAccountName = settings["BatchAccountName"];
-                BatchAccountUrl = settings["BatchAccountUrl"];
-                BatchAccountKey = settings["BatchAccountKey"];
+                BatchAccountName = settings["AZURE_BATCH_ACCOUNT"];
+                BatchAccountUrl = settings["AZURE_BATCH_ENDPOINT"];
+                BatchAccountKey = settings["AZURE_BATCH_ACCESS_KEY"];
                 JobId = settings["JobId"];
             }
         }

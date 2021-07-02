@@ -39,9 +39,9 @@ namespace Common
         protected virtual void GetEnvArgs()
         {
             var settingNames = new string[] {
-                "BatchAccountName",
-                "BatchAccountUrl",
-                "BatchAccountKey",
+                "AZURE_BATCH_ACCOUNT",
+                "AZURE_BATCH_ENDPOINT",
+                "AZURE_BATCH_ACCESS_KEY",
             };
             var settings = new Dictionary<string, string>();
             foreach (var name in settingNames)
@@ -58,9 +58,9 @@ namespace Common
                 }
                 settings[name] = value;
             }
-            BatchAccountName = settings["BatchAccountName"];
-            BatchAccountUrl = settings["BatchAccountUrl"];
-            BatchAccountKey = settings["BatchAccountKey"];
+            BatchAccountName = settings["AZURE_BATCH_ACCOUNT"];
+            BatchAccountUrl = settings["AZURE_BATCH_ENDPOINT"];
+            BatchAccountKey = settings["AZURE_BATCH_ACCESS_KEY"];
         }
     }
 }
