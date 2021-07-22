@@ -2,6 +2,7 @@
 using Microsoft.Azure.Batch.Auth;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace JobStress
 {
@@ -67,6 +68,7 @@ Usage:
             var cred = new BatchSharedKeyCredentials(settings.BatchAccountUrl, settings.BatchAccountName, settings.BatchAccountKey);
             using (BatchClient batchClient = BatchClient.Open(cred))
             {
+                var tasks = new List<Task>();
                 for (int j = 1; j <= settings.NumOfJobs; j++)
                 {
                     var jobId = $"JobStress_{ts}_Job_{j}";
@@ -86,13 +88,15 @@ Usage:
                         continue;
                     }
 
-                    var tasks = new List<CloudTask>();
+                    var cloudTasks = new List<CloudTask>();
                     for (int t = 1; t <= settings.NumOfTasks; t++)
                     {
-                        tasks.Add(new CloudTask($"task-{t}", "sleep 300"));
+                        cloudTasks.Add(new CloudTask($"task-{t}", "sleep 300"));
                     }
-                    batchClient.JobOperations.AddTask(jobId, tasks);
+                    var task = batchClient.JobOperations.AddTaskAsync(jobId, cloudTasks);
+                    tasks.Add(task);
                 }
+                Task.WaitAll(tasks.ToArray());
             }
 
             return 0;
